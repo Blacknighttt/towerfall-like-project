@@ -59,6 +59,8 @@ public class PlayerController : MonoBehaviour
     // Set jumped to true when input action is triggered
     public void OnJump(InputAction.CallbackContext _context)
     {
+        //jumped = _context.action.triggered;
+        if (!_context.action.IsPressed())
         jumped = _context.action.triggered;
     }
 
@@ -76,7 +78,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Debug function
-    public void OnDebug(InputAction.CallbackContext _context)
+    public void OnDebug()
     {
         print("key pressed");
     }

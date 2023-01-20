@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Mime;
@@ -21,14 +22,17 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D boxCollider;
 
     private Vector2 velocity;
-
+    
+    public Vector2 aimInput = Vector2.right;
     private float movementInput = 0;
 
     private bool jumped = false;
 
-
     private bool grounded;
 
+    // Projectile
+    public Projectile projectile;
+    public bool fired;
 
     // Dash variables
     [Header ("Dash")]
@@ -45,10 +49,17 @@ public class PlayerController : MonoBehaviour
         trailRenderer = GetComponent<TrailRenderer>();
     }
 
+    // Get horizontal and vertical input
+    public void OnAim(InputAction.CallbackContext _context)
+    {
+        aimInput = _context.ReadValue<Vector2>();
+    }
+
     // Set movementInput to the input movement value
     public void OnMove(InputAction.CallbackContext _context)
     {
         movementInput = _context.ReadValue<Vector2>().x;
+        aimInput = _context.ReadValue<Vector2>();
     }
 
     // Set jumped to true when input action is triggered
@@ -64,8 +75,14 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(Dash());
     }
 
+    public void OnFire(InputAction.CallbackContext _context)
+    {
+        Projectile localProjectile = Instantiate(projectile, transform.position, transform.rotation);
+        localProjectile.SetDirection(aimInput);
+    }
+
     // Debug function
-    public void OnDebug(InputAction.CallbackContext _context)
+    public void OnDebug()
     {
         print("key pressed");
     }
@@ -100,6 +117,11 @@ public class PlayerController : MonoBehaviour
         {
             velocity.x = Mathf.MoveTowards(velocity.x, 0, deceleration * Time.deltaTime);
         }
+
+        // Aim to right if there is no input
+        if (aimInput == Vector2.zero)
+            aimInput = Vector2.right;
+
 
         velocity.y += customGravity * Time.deltaTime;
 

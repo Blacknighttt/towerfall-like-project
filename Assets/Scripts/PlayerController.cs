@@ -22,17 +22,16 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D boxCollider;
 
     private Vector2 velocity;
-    Vector2[] directions = { new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0), new Vector2(1, -1), new Vector2(0, -1), new Vector2(-1, -1), new Vector2(-1, 0), new Vector2(-1, 1) };
-
+    
+    public Vector2 aimInput = Vector2.right;
     private float movementInput = 0;
-    private float testMovementInputY = 0;
 
     private bool jumped = false;
 
     private bool grounded;
 
     // Projectile
-    public GameObject projectile;
+    public Projectile projectile;
     public bool fired;
 
     // Dash variables
@@ -50,17 +49,22 @@ public class PlayerController : MonoBehaviour
         trailRenderer = GetComponent<TrailRenderer>();
     }
 
+    // Get horizontal and vertical input
+    public void OnAim(InputAction.CallbackContext _context)
+    {
+        aimInput = _context.ReadValue<Vector2>();
+    }
+
     // Set movementInput to the input movement value
     public void OnMove(InputAction.CallbackContext _context)
     {
         movementInput = _context.ReadValue<Vector2>().x;
+        aimInput = _context.ReadValue<Vector2>();
     }
 
     // Set jumped to true when input action is triggered
     public void OnJump(InputAction.CallbackContext _context)
     {
-        //jumped = _context.action.triggered;
-        if (!_context.action.IsPressed())
         jumped = _context.action.triggered;
     }
 
@@ -73,8 +77,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnFire(InputAction.CallbackContext _context)
     {
-        Vector2 inputDirection = new Vector2(movementInput, testMovementInputY);
-        Instantiate(projectile, transform.position, Quaternion.identity);
+        Projectile localProjectile = Instantiate(projectile, transform.position, transform.rotation);
+        localProjectile.SetDirection(aimInput);
     }
 
     // Debug function
@@ -113,6 +117,11 @@ public class PlayerController : MonoBehaviour
         {
             velocity.x = Mathf.MoveTowards(velocity.x, 0, deceleration * Time.deltaTime);
         }
+
+        // Aim to right if there is no input
+        if (aimInput == Vector2.zero)
+            aimInput = Vector2.right;
+
 
         velocity.y += customGravity * Time.deltaTime;
 

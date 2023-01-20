@@ -184,8 +184,8 @@ MonoBehaviour:
   airDeceleration: 30
   jumpHeight: 3
   customGravity: -50
+  projectile: {fileID: 5461534542008102556, guid: a918f13ed1a9b6548a2cb79b519d7a44, type: 3}
   fired: 0
-  projectile: {fileID: 7258762711818901194, guid: a918f13ed1a9b6548a2cb79b519d7a44, type: 3}
   dashingPower: 30
   dashingTimer: 0.2
   dashingCooldown: 1

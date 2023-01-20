@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 976150913189255308}
   - component: {fileID: 976150913189255311}
   - component: {fileID: 976150913189255310}
-  - component: {fileID: 3415204587187159912}
+  - component: {fileID: 1184992807414766606}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -320,7 +320,7 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!96 &3415204587187159912
+--- !u!96 &1184992807414766606
 TrailRenderer:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -362,8 +362,8 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.02
-  m_PreviewTimeScale: 0
+  m_Time: 0.2
+  m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1

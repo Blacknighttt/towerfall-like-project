@@ -118,7 +118,7 @@ Transform:
   m_Children:
   - {fileID: 976150912709183287}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &976150913189255308
 BoxCollider2D:
@@ -184,6 +184,8 @@ MonoBehaviour:
   airDeceleration: 30
   jumpHeight: 3
   customGravity: -50
+  fired: 0
+  projectile: {fileID: 7258762711818901194, guid: a918f13ed1a9b6548a2cb79b519d7a44, type: 3}
   dashingPower: 30
   dashingTimer: 0.2
   dashingCooldown: 1
@@ -245,7 +247,19 @@ MonoBehaviour:
     m_ActionId: f534c7cc-5ddb-483e-acae-12120078720a
     m_ActionName: Player/Jump[/Keyboard/w]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 976150913189255311}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnFire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: PlayerController.OnFire
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 2d34684c-f650-428f-a37c-bcdc0a91ad58
     m_ActionName: 'Player/Fire[/Keyboard/space,/OBINS OBINS
 

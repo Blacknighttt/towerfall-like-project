@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Mime;
@@ -21,14 +22,18 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D boxCollider;
 
     private Vector2 velocity;
+    Vector2[] directions = { new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0), new Vector2(1, -1), new Vector2(0, -1), new Vector2(-1, -1), new Vector2(-1, 0), new Vector2(-1, 1) };
 
     private float movementInput = 0;
+    private float testMovementInputY = 0;
 
     private bool jumped = false;
 
-
     private bool grounded;
 
+    // Projectile
+    public GameObject projectile;
+    public bool fired;
 
     // Dash variables
     [Header ("Dash")]
@@ -62,6 +67,12 @@ public class PlayerController : MonoBehaviour
     {
         if (canDash & _context.action.triggered)
         StartCoroutine(Dash());
+    }
+
+    public void OnFire(InputAction.CallbackContext _context)
+    {
+        Vector2 inputDirection = new Vector2(movementInput, testMovementInputY);
+        Instantiate(projectile, transform.position, Quaternion.identity);
     }
 
     // Debug function

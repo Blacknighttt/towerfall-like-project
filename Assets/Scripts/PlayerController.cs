@@ -17,9 +17,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float groundDeceleration = 150;
     [SerializeField] private float airDeceleration = 100;
     [SerializeField] private float jumpHeight = 3;
-    [SerializeField] private float customGravity = -30f;
+    [SerializeField] public float customGravity = -30f;
     [SerializeField] private float wallJumpForce = 50f;
-
 
 
     private BoxCollider2D boxCollider;
@@ -42,6 +41,8 @@ public class PlayerController : MonoBehaviour
     // Projectile
     [Header("Projectile")]
     public Projectile projectile;
+    private Projectile lastProjectile;
+    private BoxCollider2D projectileCollider;
     private bool isFiring;
 
 
@@ -87,6 +88,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(Dash());
     }
 
+    // Instantiate projectile and set its direction to aim
     public void OnFire(InputAction.CallbackContext _context)
     {
         if (_context.started)
@@ -94,6 +96,7 @@ public class PlayerController : MonoBehaviour
         if (_context.canceled)
         {
             Projectile localProjectile = Instantiate(projectile, transform.position, transform.rotation);
+
             if (aimInput != Vector2.zero)
             {
                 localProjectile.SetDirection(aimInput);
@@ -102,8 +105,29 @@ public class PlayerController : MonoBehaviour
                 localProjectile.SetDirection(lastAimInput);
 
             isFiring = false;
+            lastProjectile = localProjectile;
+            projectileCollider = lastProjectile.GetComponentInChildren<BoxCollider2D>();
         }
     }
+
+    // Dash coroutine
+    private IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+        float originalGravity = customGravity;
+        customGravity = 0;
+        velocity = new Vector2(movementInput * dashingPower, 0f);
+        trailRenderer.emitting = true;
+        yield return new WaitForSeconds(dashingTimer);
+
+        trailRenderer.emitting = false;
+        customGravity = originalGravity;
+        isDashing = false;
+        yield return new WaitForSeconds(dashingCooldown);
+        canDash = true;
+    }
+
 
     // Debug function
     public void OnDebug()
@@ -127,10 +151,49 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         SetSpriteFacing();
+        SetLastAim();
     }
 
 
     private void FixedUpdate()
+    {
+
+        float acceleration = grounded ? walkAcceleration : airAcceleration;
+        float deceleration = grounded ? groundDeceleration : airDeceleration;
+
+        CalculateVerticalVelocity();
+
+        CalculateLateralVelocity(acceleration, deceleration);
+
+        SetMovement();
+
+        CheckCollisions();
+    }
+
+    // Calculate x velocity
+    private void CalculateLateralVelocity(float _acceleration, float _deceleration)
+    {
+        if (!isFiring)
+        {
+            if (movementInput != 0)
+            {
+                velocity.x = Mathf.MoveTowards(velocity.x, speed * movementInput, _acceleration * Time.deltaTime);
+            }
+            else
+            {
+                velocity.x = Mathf.MoveTowards(velocity.x, 0, _deceleration * Time.deltaTime);
+            }
+        }
+    }
+
+    // Set player movement based on its velocity
+    private void SetMovement()
+    {
+        transform.Translate(velocity * Time.deltaTime);
+    }
+
+    // Shoot left or right based on last aim input if no new input
+    private void SetLastAim()
     {
         if (aimInput != Vector2.zero)
         {
@@ -139,7 +202,11 @@ public class PlayerController : MonoBehaviour
                 lastAimInput.x = aimInput.x;
             }
         }
+    }
 
+    // Set velocity based on jump (ground or wall)
+    private void CalculateVerticalVelocity()
+    {
         if (grounded)
         {
             velocity.y = 0;
@@ -150,7 +217,7 @@ public class PlayerController : MonoBehaviour
                 velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity));
             }
         }
-        else if (onWallLeft)
+        if (onWallLeft)
         {
             if (velocity.y < 0)
             {
@@ -158,11 +225,10 @@ public class PlayerController : MonoBehaviour
             }
             if (jumped)
             {
-                //velocity.x = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity) * -1);
                 velocity = new Vector2(wallJumpForce * -1, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
             }
         }
-        else if (onWallRight)
+        if (onWallRight)
         {
             if (velocity.y < 0)
             {
@@ -170,31 +236,15 @@ public class PlayerController : MonoBehaviour
             }
             if (jumped)
             {
-                //velocity.x = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity) * -1);
                 velocity = new Vector2(wallJumpForce * 1, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
             }
         }
-
-        float acceleration = grounded ? walkAcceleration : airAcceleration;
-        float deceleration = grounded ? groundDeceleration : airDeceleration;
-
-        if (!isFiring)
-        {
-            if (movementInput != 0)
-            {
-                velocity.x = Mathf.MoveTowards(velocity.x, speed * movementInput, acceleration * Time.deltaTime);
-            }
-            else
-            {
-                velocity.x = Mathf.MoveTowards(velocity.x, 0, deceleration * Time.deltaTime);
-            }
-        }
-
-
         velocity.y += customGravity * Time.deltaTime;
+    }
 
-        transform.Translate(velocity * Time.deltaTime);
-
+    // Check all collisions
+    private void CheckCollisions()
+    {
         grounded = false;
         onWallRight = false;
         onWallLeft = false;
@@ -204,8 +254,9 @@ public class PlayerController : MonoBehaviour
 
         foreach (Collider2D hit in hits)
         {
-            // Ignore our own collider
-            if (hit == boxCollider)
+            // Ignore our own collider & our own projectile
+
+            if (hit == boxCollider || hit == projectileCollider)
                 continue;
 
             ColliderDistance2D colliderDistance = hit.Distance(boxCollider);
@@ -224,7 +275,7 @@ public class PlayerController : MonoBehaviour
                 // If we intersect an object on our right or left, set wall ??? to true
                 else if (Vector2.Angle(colliderDistance.normal, Vector2.right) < 90 || Vector2.Angle(colliderDistance.normal, Vector2.left) < 90)
                 {
-                    print("wall");
+                    print("wall detected");
                     if (Vector2.Angle(colliderDistance.normal, Vector2.right) < 90)
                     {
                         onWallRight = true;
@@ -236,22 +287,5 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-    }
-
-    private IEnumerator Dash()
-    {
-        canDash = false;
-        isDashing = true;
-        float originalGravity = customGravity;
-        customGravity = 0;
-        velocity = new Vector2(movementInput * dashingPower, 0f);
-        trailRenderer.emitting = true;
-        yield return new WaitForSeconds(dashingTimer);
-
-        trailRenderer.emitting = false;
-        customGravity = originalGravity;
-        isDashing = false;
-        yield return new WaitForSeconds(dashingCooldown);
-        canDash = true;
     }
 }

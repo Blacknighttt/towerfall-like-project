@@ -252,7 +252,7 @@ MonoBehaviour:
   grounded: 0
   onWallRight: 0
   onWallLeft: 0
-  projectile: {fileID: 5461534542008102556, guid: a918f13ed1a9b6548a2cb79b519d7a44, type: 3}
+  projectile: {fileID: 7090071650743770426, guid: a918f13ed1a9b6548a2cb79b519d7a44, type: 3}
   dashingPower: 70
   dashingTimer: 0.2
   dashingCooldown: 1

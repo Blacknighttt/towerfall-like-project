@@ -19,20 +19,27 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpHeight = 3;
     [SerializeField] private float customGravity = -30f;
 
+
+
     private BoxCollider2D boxCollider;
+    private SpriteRenderer spriteRenderer;
 
     private Vector2 velocity;
-    
-    public Vector2 aimInput = Vector2.right;
+
+    public Vector2 aimInput;
+    public Vector2 lastAimInput = Vector2.right;
     private float movementInput = 0;
 
     private bool jumped = false;
 
     private bool grounded;
 
+
     // Projectile
+    [Header("Projectile")]
     public Projectile projectile;
-    public bool fired;
+    private bool isFiring;
+
 
     // Dash variables
     [Header ("Dash")]
@@ -47,6 +54,7 @@ public class PlayerController : MonoBehaviour
     {
         boxCollider = GetComponent<BoxCollider2D>();
         trailRenderer = GetComponent<TrailRenderer>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     // Get horizontal and vertical input
@@ -77,8 +85,20 @@ public class PlayerController : MonoBehaviour
 
     public void OnFire(InputAction.CallbackContext _context)
     {
-        Projectile localProjectile = Instantiate(projectile, transform.position, transform.rotation);
-        localProjectile.SetDirection(aimInput);
+        if (_context.started)
+            isFiring = true;
+        if (_context.canceled)
+        {
+            Projectile localProjectile = Instantiate(projectile, transform.position, transform.rotation);
+            if (aimInput != Vector2.zero)
+            {
+                localProjectile.SetDirection(aimInput);
+            }
+            else
+                localProjectile.SetDirection(lastAimInput);
+
+            isFiring = false;
+        }
     }
 
     // Debug function
@@ -87,13 +107,34 @@ public class PlayerController : MonoBehaviour
         print("key pressed");
     }
 
+    private void SetSpriteFacing()
+    {
+        if (lastAimInput.x < 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+        else if (lastAimInput.x > 0)
+        {
+            spriteRenderer.flipX = false;
+        }
+    }
 
 
-
+    private void Update()
+    {
+        SetSpriteFacing();
+    }
 
 
     private void FixedUpdate()
     {
+        if (aimInput != Vector2.zero)
+        {
+            if (aimInput.x != 0)
+            {
+                lastAimInput.x = aimInput.x;
+            }
+        }
 
         if (grounded)
         {
@@ -109,18 +150,17 @@ public class PlayerController : MonoBehaviour
         float acceleration = grounded ? walkAcceleration : airAcceleration;
         float deceleration = grounded ? groundDeceleration : airDeceleration;
 
-        if (movementInput != 0)
+        if (!isFiring)
         {
-            velocity.x = Mathf.MoveTowards(velocity.x, speed * movementInput, acceleration * Time.deltaTime);
+            if (movementInput != 0)
+            {
+                velocity.x = Mathf.MoveTowards(velocity.x, speed * movementInput, acceleration * Time.deltaTime);
+            }
+            else
+            {
+                velocity.x = Mathf.MoveTowards(velocity.x, 0, deceleration * Time.deltaTime);
+            }
         }
-        else
-        {
-            velocity.x = Mathf.MoveTowards(velocity.x, 0, deceleration * Time.deltaTime);
-        }
-
-        // Aim to right if there is no input
-        if (aimInput == Vector2.zero)
-            aimInput = Vector2.right;
 
 
         velocity.y += customGravity * Time.deltaTime;
@@ -150,6 +190,11 @@ public class PlayerController : MonoBehaviour
                 if (Vector2.Angle(colliderDistance.normal, Vector2.up) < 90 && velocity.y < 0)
                 {
                     grounded = true;
+                }
+                // If we intersect an object on our right or left, set wall ??? to true
+                else if (Vector2.Angle(colliderDistance.normal, Vector2.right) < 90 || Vector2.Angle(colliderDistance.normal, Vector2.left) < 90)
+                {
+                    print("wall");
                 }
             }
         }

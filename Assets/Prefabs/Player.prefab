@@ -73,8 +73,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 8849c1359daaabf47ae2d68b50f1ccbf, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -152,7 +152,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.072184086, y: -0.018045902}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -163,7 +163,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.118857, y: 4.4287558}
   m_EdgeRadius: 0
 --- !u!114 &976150913189255311
 MonoBehaviour:
@@ -177,16 +177,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279c457426a06ab49b27795812476a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 9
-  walkAcceleration: 100
-  airAcceleration: 100
-  groundDeceleration: 100
-  airDeceleration: 30
-  jumpHeight: 3
-  customGravity: -50
+  speed: 20
+  walkAcceleration: 200
+  airAcceleration: 200
+  groundDeceleration: 200
+  airDeceleration: 60
+  jumpHeight: 6
+  customGravity: -100
+  aimInput: {x: 1, y: 0}
   projectile: {fileID: 5461534542008102556, guid: a918f13ed1a9b6548a2cb79b519d7a44, type: 3}
   fired: 0
-  dashingPower: 30
+  dashingPower: 60
   dashingTimer: 0.2
   dashingCooldown: 1
 --- !u!114 &976150913189255310

@@ -98,5 +98,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rbProjectile: {fileID: 0}
   playerController: {fileID: 976150913189255311, guid: c876e4b88d862c94480ee4b4d0c05207, type: 3}
-  speed: 20
+  speed: 25
   direction: {x: 0, y: 0}

@@ -6,4 +6,8 @@ TimeManager:
   Fixed Timestep: 0.007
   Maximum Allowed Timestep: 0.33333334
   m_TimeScale: 1
+<<<<<<< Updated upstream
   Maximum Particle Timestep: 0.087
+=======
+  Maximum Particle Timestep: 0.07
+>>>>>>> Stashed changes

@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float airDeceleration = 100;
     [SerializeField] private float jumpHeight = 3;
     [SerializeField] private float customGravity = -30f;
+    [SerializeField] private float wallJumpForce = 50f;
 
 
 
@@ -25,14 +26,22 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     private Vector2 velocity;
+<<<<<<< Updated upstream
 
     public Vector2 aimInput;
     public Vector2 lastAimInput = Vector2.right;
+=======
+    public float fallSpeed;
+    
+    public Vector2 aimInput = Vector2.right;
+>>>>>>> Stashed changes
     private float movementInput = 0;
 
-    private bool jumped = false;
+    public bool jumped = false;
 
-    private bool grounded;
+    public bool grounded;
+    public bool onWallRight;
+    public bool onWallLeft;
 
 
     // Projectile
@@ -128,6 +137,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+<<<<<<< Updated upstream
         if (aimInput != Vector2.zero)
         {
             if (aimInput.x != 0)
@@ -136,14 +146,41 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+=======
+        
+>>>>>>> Stashed changes
         if (grounded)
         {
             velocity.y = 0;
 
             if (jumped)
             {
-                // Calculate the velocity required to achieve the target jump height
-                velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity));
+                    // Calculate the velocity required to achieve the target jump height
+                    velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity));
+            }
+        }
+        else if (onWallLeft)
+        {
+            if (velocity.y < 0)
+            {
+                velocity.y /= 2;
+            }
+            if (jumped)
+            {
+                //velocity.x = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity) * -1);
+                velocity = new Vector2(wallJumpForce * -1, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
+            }
+        }
+        else if (onWallRight)
+        {
+            if (velocity.y < 0)
+            {
+                velocity.y /= 2;
+            }
+            if (jumped)
+            {
+                //velocity.x = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity) * -1);
+                velocity = new Vector2(wallJumpForce * 1, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
             }
         }
 
@@ -168,6 +205,8 @@ public class PlayerController : MonoBehaviour
         transform.Translate(velocity * Time.deltaTime);
 
         grounded = false;
+        onWallRight = false;
+        onWallLeft= false;
 
         // Retrieve all colliders we have intersected after velocity has been applied
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
@@ -191,10 +230,20 @@ public class PlayerController : MonoBehaviour
                 {
                     grounded = true;
                 }
+<<<<<<< Updated upstream
                 // If we intersect an object on our right or left, set wall ??? to true
                 else if (Vector2.Angle(colliderDistance.normal, Vector2.right) < 90 || Vector2.Angle(colliderDistance.normal, Vector2.left) < 90)
                 {
                     print("wall");
+=======
+                if (Vector2.Angle(colliderDistance.normal, Vector2.right) < 90)
+                {
+                    onWallRight = true;
+                }
+                if (Vector2.Angle(colliderDistance.normal, Vector2.left) < 90)
+                {
+                    onWallLeft = true;
+>>>>>>> Stashed changes
                 }
             }
         }

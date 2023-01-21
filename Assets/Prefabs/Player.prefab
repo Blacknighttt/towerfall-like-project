@@ -149,7 +149,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.072184086, y: -0.018045902}
@@ -177,6 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279c457426a06ab49b27795812476a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream
   speed: 20
   walkAcceleration: 200
   airAcceleration: 200
@@ -185,6 +186,22 @@ MonoBehaviour:
   jumpHeight: 6
   customGravity: -100
   aimInput: {x: 1, y: 0}
+=======
+  speed: 10
+  walkAcceleration: 100
+  airAcceleration: 100
+  groundDeceleration: 100
+  airDeceleration: 30
+  jumpHeight: 5
+  customGravity: -50
+  wallJumpForce: 20
+  fallSpeed: 0
+  aimInput: {x: 1, y: 0}
+  jumped: 0
+  grounded: 0
+  onWallRight: 0
+  onWallLeft: 0
+>>>>>>> Stashed changes
   projectile: {fileID: 5461534542008102556, guid: a918f13ed1a9b6548a2cb79b519d7a44, type: 3}
   fired: 0
   dashingPower: 60

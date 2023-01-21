@@ -26,15 +26,10 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     private Vector2 velocity;
-<<<<<<< Updated upstream
 
     public Vector2 aimInput;
     public Vector2 lastAimInput = Vector2.right;
-=======
-    public float fallSpeed;
     
-    public Vector2 aimInput = Vector2.right;
->>>>>>> Stashed changes
     private float movementInput = 0;
 
     public bool jumped = false;
@@ -137,7 +132,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-<<<<<<< Updated upstream
         if (aimInput != Vector2.zero)
         {
             if (aimInput.x != 0)
@@ -146,17 +140,14 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-=======
-        
->>>>>>> Stashed changes
         if (grounded)
         {
             velocity.y = 0;
 
             if (jumped)
             {
-                    // Calculate the velocity required to achieve the target jump height
-                    velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity));
+                // Calculate the velocity required to achieve the target jump height
+                velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity));
             }
         }
         else if (onWallLeft)
@@ -206,7 +197,7 @@ public class PlayerController : MonoBehaviour
 
         grounded = false;
         onWallRight = false;
-        onWallLeft= false;
+        onWallLeft = false;
 
         // Retrieve all colliders we have intersected after velocity has been applied
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
@@ -230,20 +221,18 @@ public class PlayerController : MonoBehaviour
                 {
                     grounded = true;
                 }
-<<<<<<< Updated upstream
                 // If we intersect an object on our right or left, set wall ??? to true
                 else if (Vector2.Angle(colliderDistance.normal, Vector2.right) < 90 || Vector2.Angle(colliderDistance.normal, Vector2.left) < 90)
                 {
                     print("wall");
-=======
-                if (Vector2.Angle(colliderDistance.normal, Vector2.right) < 90)
-                {
-                    onWallRight = true;
-                }
-                if (Vector2.Angle(colliderDistance.normal, Vector2.left) < 90)
-                {
-                    onWallLeft = true;
->>>>>>> Stashed changes
+                    if (Vector2.Angle(colliderDistance.normal, Vector2.right) < 90)
+                    {
+                        onWallRight = true;
+                    }
+                    if (Vector2.Angle(colliderDistance.normal, Vector2.left) < 90)
+                    {
+                        onWallLeft = true;
+                    }
                 }
             }
         }

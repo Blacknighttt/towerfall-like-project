@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public PlayerController playerController;
+    public GameObject owner;
     private Transform spriteTransform;
     private BoxCollider2D boxCollider;
 
@@ -32,6 +32,16 @@ public class Projectile : MonoBehaviour
         StartCoroutine(WaitForGravity());
     }
 
+    public void SetOwner(GameObject _owner)
+    {
+        owner = _owner;
+    }
+
+    public GameObject GetOwner()
+    {
+        return owner;
+    }
+
     private void SetSpriteOrientation()
     {
         if(velocity != Vector2.zero)
@@ -50,7 +60,7 @@ public class Projectile : MonoBehaviour
             transform.Translate(velocity * Time.deltaTime);
         }
         SetSpriteOrientation();
-        CheckCollisions();
+        //CheckCollisions();
     }
 
     private IEnumerator WaitForGravity()
@@ -63,28 +73,39 @@ public class Projectile : MonoBehaviour
 
         gravity = projectileGravity;
     }
-    private void CheckCollisions()
+
+    public void OnCollisionEnter2D(Collision2D collision)
     {
-        // Retrieve all colliders we have intersected after velocity has been applied
-        Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
-
-        foreach (Collider2D hit in hits)
+        switch (collision.gameObject.tag)
         {
-            // Ignore our own collider
-
-            if (hit == boxCollider || hit == playerController.boxCollider || hit.gameObject.CompareTag("Projectile"))
-                return;
-
-            ColliderDistance2D colliderDistance = hit.Distance(boxCollider);
-
-            // Ensure that we are still overlapping this collider
-            // The overlap may no longer exist due to another intersected collider pushing us out of this one
-            if (colliderDistance.isOverlapped)
-            {
-                transform.Translate(colliderDistance.pointA - colliderDistance.pointB);
+            case "Ground":
+            case "Wall":
+                GetComponent<Rigidbody2D>().mass = 0;
+                GetComponent<Rigidbody2D>().freezeRotation = true;
+                GetComponent<Rigidbody2D>().drag = 1000;
                 velocity = Vector2.zero;
                 anchored = true;
-            }
+                break;
+
+            case "Player":
+                if(collision.gameObject != owner)
+                {
+                    if (!anchored)
+                    {
+                        print("ProjectileOnCollision2D: Kill Enemy");
+                        Destroy(collision.gameObject);
+                    }
+                }
+                else if (collision.GetContact(0).normal.y > 0)
+                {
+                    print("ProjectileOnCollision2D: Kill Own Player");
+                    //Destroy(owner); //Bug, we shall check direction + velocity or distance
+                }
+                break;
+
+            default:
+                print("ProjectileOnCollision2D: Unknown Tag (" + collision.gameObject.tag + ")");
+                break;
         }
     }
 

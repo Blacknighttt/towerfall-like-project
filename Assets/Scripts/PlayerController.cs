@@ -35,10 +35,9 @@ public class PlayerController : MonoBehaviour
     private float movementInput = 0;
 
     public bool jumped = false;
-
     public bool isGrounded;
-    public bool onWallRight;
-    public bool onWallLeft;
+    private bool wallJump = false;
+    private Vector2 wallDirection;
 
     // Raycast
     private float raycastDistance = 0.2f;
@@ -106,6 +105,8 @@ public class PlayerController : MonoBehaviour
         {
             Projectile localProjectile = Instantiate(projectile, transform.position, transform.rotation);
 
+            localProjectile.SetOwner(this.gameObject);
+
             if (aimInput != Vector2.zero)
             {
                 localProjectile.SetDirection(aimInput);
@@ -168,15 +169,82 @@ public class PlayerController : MonoBehaviour
         SetLastAim();
     }
 
-    public void OnCollisionEnter(Collision collision)
+    public void OnCollisionEnter2D(Collision2D collision)
     {
-        print("collion enter");
+        switch(collision.gameObject.tag)
+        {
+            case "PowerUp":
+                //print("OnCollisionEnter2D: PowerUp");
+                collision.gameObject.GetComponent<PowerUp>().Activate();
+                break;
+
+            case "Wall":
+                //print("OnCollisionEnter2D: Wall");
+                wallJump = true;
+                wallDirection = collision.GetContact(0).normal; // Set wall direction
+                break;
+
+            case "Projectile":
+                Projectile projectile = collision.gameObject.GetComponent<Projectile>();
+                if (projectile.anchored)
+                {
+                    print("OnCollisionEnter2D: Pickup Projectile");
+                    projectile.PickedUp();
+                }
+                break;
+
+            case "Ground":
+                //print("OnCollisionEnter2D: Ground");
+                isGrounded = true;
+                break;
+
+            case "Player":
+                print("OnCollisionEnter2D: Player");
+                if(collision.GetContact(0).normal.y > 0) 
+                    collision.gameObject.GetComponent<PlayerController>().Die(); // Kill player beneath us
+                break;
+
+            default:
+                print("OnCollisionEnter2D: Unknown Tag (" + collision.gameObject.tag + ")");
+                break;
+        }
+    }
+
+    public void OnCollisionExit2D(Collision2D collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "PowerUp":
+                //print("OnCollisionExit2D: PowerUp");
+                break;
+
+            case "Wall":
+                print("OnCollisionExit2D: Wall");
+                wallJump = false;
+                break;
+
+            case "Projectile":
+                //print("OnCollisionExit2D: Projectile");
+                break;
+
+            case "Ground":
+                //print("OnCollisionExit2D: Ground");
+                isGrounded = false;
+                break;
+
+            case "Player":
+                print("OnCollisionEnter2D: Player");
+                break;
+
+            default:
+                print("OnCollisionExit2D: Unknown Tag (" + collision.gameObject.tag + ")");
+                break;
+        }
     }
 
 
     private void FixedUpdate()
     {
-
         float acceleration = isGrounded ? walkAcceleration : airAcceleration;
         float deceleration = isGrounded ? groundDeceleration : airDeceleration;
 
@@ -185,8 +253,6 @@ public class PlayerController : MonoBehaviour
         CalculateHorizontalVelocity(acceleration, deceleration);
 
         SetMovement();
-
-        CheckCollisions();
     }
 
     // Calculate x velocity
@@ -236,7 +302,8 @@ public class PlayerController : MonoBehaviour
                 velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity));
             }
         }
-        if (onWallLeft)
+
+        if (wallJump)
         {
             if (velocity.y < 0)
             {
@@ -244,90 +311,10 @@ public class PlayerController : MonoBehaviour
             }
             if (jumped)
             {
-                velocity = new Vector2(wallJumpForce * -1, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
+                velocity = new Vector2(wallJumpForce * wallDirection.x, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
             }
         }
-        if (onWallRight)
-        {
-            if (velocity.y < 0)
-            {
-                velocity.y /= 2;
-            }
-            if (jumped)
-            {
-                velocity = new Vector2(wallJumpForce * 1, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
-            }
-        }
+
         velocity.y += customGravity * Time.deltaTime;
-    }
-
-    // Check all collisions
-
-
-    private void CheckCollisions()
-    {
-        isGrounded = false;
-        onWallRight = false;
-        onWallLeft = false;
-    
-        // Retrieve all colliders we have intersected after velocity has been applied
-        Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
-    
-        foreach (Collider2D hit in hits)
-        {
-            // Ignore our own collider & our own projectile
-    
-            if (hit == boxCollider || hit == projectileCollider)
-                continue;
-    
-            ColliderDistance2D colliderDistance = hit.Distance(boxCollider);
-    
-            // Ensure that we are still overlapping this collider
-            // The overlap may no longer exist due to another intersected collider pushing us out of this one
-            if (colliderDistance.isOverlapped)
-            {
-                if (hit.gameObject.CompareTag("PowerUp"))
-                {
-                    hit.gameObject.GetComponent<PowerUp>().Activate();
-                }
-                transform.Translate(colliderDistance.pointA - colliderDistance.pointB);
-
-                // If we intersect an object beneath us, set grounded to true
-                if (Vector2.Angle(colliderDistance.normal, Vector2.up) < 90 && velocity.y < 0)
-                {
-                    isGrounded = true;
-                }
-
-                // If we intersect a player beneath us, kill player
-                if (Vector2.Angle(colliderDistance.normal, Vector2.up) < 90 && hit.gameObject.CompareTag("Player"))
-                {
-                    hit.gameObject.GetComponent<PlayerController>().Die();
-                }
-
-                // If we intersect an object on our right or left, set wall ??? to true
-                else if (Vector2.Angle(colliderDistance.normal, Vector2.right) < 90 || Vector2.Angle(colliderDistance.normal, Vector2.left) < 90)
-                {
-                    print("wall detected");
-                    if (Vector2.Angle(colliderDistance.normal, Vector2.right) < 90)
-                    {
-                        onWallRight = true;
-                    }
-                    if (Vector2.Angle(colliderDistance.normal, Vector2.left) < 90)
-                    {
-                        onWallLeft = true;
-                    }
-                }
-                if (hit.gameObject.CompareTag("Projectile"))
-                {
-                    Projectile projectile = hit.gameObject.GetComponent<Projectile>();
-                    if (projectile.anchored)
-                    {
-                        print("projectile");
-                        projectile.PickedUp();
-                        return;
-                    }
-                }
-            }
-        }
     }
 }

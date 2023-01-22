@@ -10,12 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 3515011622623705660}
   - component: {fileID: 8605664829025047159}
+  - component: {fileID: 6607522777271132706}
   - component: {fileID: 4104596215925142202}
   - component: {fileID: 8711168125661291456}
   - component: {fileID: 6687853859258386993}
+  - component: {fileID: 3425658694412725383}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -81,6 +83,41 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.8173307, y: 4.3568935}
   m_EdgeRadius: 0
+--- !u!70 &6607522777271132706
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 468187997878387329}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.9003353, y: -0.8934578}
+  m_Size: {x: 2.8006706, y: 2.7869155}
+  m_Direction: 0
 --- !u!114 &4104596215925142202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,12 +283,19 @@ MonoBehaviour:
   jumpHeight: 6
   customGravity: -60
   wallJumpForce: 25
+  boxCollider: {fileID: 0}
   aimInput: {x: 0, y: 0}
   lastAimInput: {x: 1, y: 0}
   jumped: 0
-  grounded: 0
+  isGrounded: 0
   onWallRight: 0
   onWallLeft: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 128
   projectile: {fileID: 7090071650743770426, guid: a918f13ed1a9b6548a2cb79b519d7a44, type: 3}
   dashingPower: 70
   dashingTimer: 0.2
@@ -369,6 +413,33 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 0
   m_ApplyActiveColorSpace: 1
+--- !u!50 &3425658694412725383
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 468187997878387329}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 2
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 4
 --- !u!1 &2874986173543842389
 GameObject:
   m_ObjectHideFlags: 0

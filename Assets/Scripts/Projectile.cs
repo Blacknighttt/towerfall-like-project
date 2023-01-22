@@ -84,7 +84,6 @@ public class Projectile : MonoBehaviour
                 transform.Translate(colliderDistance.pointA - colliderDistance.pointB);
                 velocity = Vector2.zero;
                 anchored = true;
-                print("collision");
             }
         }
     }

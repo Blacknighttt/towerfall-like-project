@@ -283,6 +283,7 @@ MonoBehaviour:
   jumpHeight: 6
   customGravity: -60
   wallJumpForce: 25
+  powerUp: {fileID: 7557147776522420846, guid: 41b7b4f69325e9f48a93070a88ccaa40, type: 3}
   boxCollider: {fileID: 0}
   aimInput: {x: 0, y: 0}
   lastAimInput: {x: 1, y: 0}

@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
 {
     // Movement variables
     [Header ("Movement")]
-    [SerializeField] private float speed = 10;
+    [SerializeField] public float speed = 10;
     [SerializeField] private float walkAcceleration = 100;
     [SerializeField] private float airAcceleration = 100;
     [SerializeField] private float groundDeceleration = 150;
@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float wallJumpForce = 50f;
 
 
+    public PowerUp powerUp;
     public BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
 
@@ -285,9 +286,12 @@ public class PlayerController : MonoBehaviour
             // The overlap may no longer exist due to another intersected collider pushing us out of this one
             if (colliderDistance.isOverlapped)
             {
-    
+                if (hit.gameObject.CompareTag("PowerUp"))
+                {
+                    hit.gameObject.GetComponent<PowerUp>().Activate();
+                }
                 transform.Translate(colliderDistance.pointA - colliderDistance.pointB);
-    
+
                 // If we intersect an object beneath us, set grounded to true
                 if (Vector2.Angle(colliderDistance.normal, Vector2.up) < 90 && velocity.y < 0)
                 {

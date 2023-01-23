@@ -23,17 +23,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float wallJumpForce = 50f;
 
 
-    public PowerUp powerUp;
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
+    private Animator animator;
 
-    private Vector2 velocity;
+    public Vector2 velocity;
 
     public Vector2 aimInput;
     public Vector2 lastAimInput = Vector2.right;
     
     private float movementInput = 0;
 
+    // Powerups
+    public GameObject shieldPrefab;
+
+    // Wall & ground
     public bool jumped = false;
     public bool isGrounded;
     private bool wallJump = false;
@@ -61,12 +65,14 @@ public class PlayerController : MonoBehaviour
     public AudioSource audioSourceDash;
     public AudioSource audioSourcePick;
     public AudioSource audioSourceThrow;
+    public AudioSource audioSourceSlide;
 
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
         trailRenderer = GetComponent<TrailRenderer>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        animator = GetComponent<Animator>();
     }
 
     // Get horizontal and vertical input
@@ -100,10 +106,14 @@ public class PlayerController : MonoBehaviour
     public void OnFire(InputAction.CallbackContext _context)
     {
         if (_context.started)
+        {
             isFiring = true;
+            animator.SetTrigger("Throw");
+        }
         if (_context.canceled)
         {
             Projectile localProjectile = Instantiate(projectile, transform.position, transform.rotation);
+            animator.SetTrigger("ThrowReleased");
             audioSourceThrow.Play();
             localProjectile.SetOwner(this.gameObject);
 
@@ -121,6 +131,7 @@ public class PlayerController : MonoBehaviour
     // Dash coroutine
     private IEnumerator Dash()
     {
+        animator.SetTrigger("Dash");
         canDash = false;
         isDashing = true;
         float originalGravity = customGravity;
@@ -158,6 +169,7 @@ public class PlayerController : MonoBehaviour
 
     public void Die()
     {
+        //animator.SetTrigger("Death");
         Destroy(gameObject);
     }
 
@@ -174,7 +186,17 @@ public class PlayerController : MonoBehaviour
         {
             case "PowerUp":
                 //print("OnCollisionEnter2D: PowerUp");
-                collision.gameObject.GetComponent<PowerUp>().Activate();
+                if (collision.gameObject.layer == LayerMask.NameToLayer("ShieldUp"))
+                {
+                    print("J'ai un shield");
+                    ShieldEffects();
+                }
+                if (collision.gameObject.layer == LayerMask.NameToLayer("SpeedUp"))
+                {
+                    print("je vais plus vite");
+                    SpeedEffects();
+                }
+                Destroy(collision.gameObject);
                 break;
 
             case "Wall":
@@ -209,6 +231,18 @@ public class PlayerController : MonoBehaviour
                 break;
         }
     }
+
+    private void ShieldEffects()
+    {
+        GameObject shield = Instantiate(shieldPrefab, transform.position, transform.rotation);
+        shield.transform.SetParent(transform);
+    }
+
+    private void SpeedEffects()
+    {
+
+    }
+
 
     public void OnCollisionExit2D(Collision2D collision)
     {
@@ -253,6 +287,10 @@ public class PlayerController : MonoBehaviour
         CalculateHorizontalVelocity(acceleration, deceleration);
 
         SetMovement();
+
+        animator.SetBool("Grounded", isGrounded);
+        animator.SetBool("HorizontalMovement", velocity.x != 0);
+        animator.SetBool("Fall", velocity.y < -2f);
     }
 
     // Calculate x velocity
@@ -300,6 +338,7 @@ public class PlayerController : MonoBehaviour
             {
                 // Calculate the velocity required to achieve the target jump height
                 velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity));
+                StartAnimationJump();
                 audioSourceJump.Play();
             }
         }
@@ -309,14 +348,30 @@ public class PlayerController : MonoBehaviour
             if (velocity.y < 0)
             {
                 velocity.y /= 2;
+                audioSourceSlide.Play();
+                animator.SetBool("WallSlide", true);
             }
             if (jumped)
             {
+                animator.SetBool("WallSlide", false);
+                animator.SetBool("Jump", true);
                 velocity = new Vector2(wallJumpForce * wallDirection.x, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
                 audioSourceJump.Play();
+                StartAnimationJump();
             }
         }
+        else if (!wallJump)
+            animator.SetBool("WallSlide", false);
 
         velocity.y += customGravity * Time.deltaTime;
+    }
+
+    public void StartAnimationJump()
+    {
+        animator.SetBool("Jump", true);
+    }
+    public void EndAnimationJump()
+    {
+        animator.SetBool("Jump", false);
     }
 }

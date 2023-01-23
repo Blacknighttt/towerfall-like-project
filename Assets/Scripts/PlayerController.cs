@@ -62,6 +62,7 @@ public class PlayerController : MonoBehaviour
     public AudioSource audioSourcePick;
     public AudioSource audioSourceThrow;
     public AudioSource audioSourceSlide;
+    public AudioSource audioSourcePowerUp;
 
     private void Awake()
     {
@@ -175,6 +176,7 @@ public class PlayerController : MonoBehaviour
         {
             case "PowerUp":
                 //print("OnCollisionEnter2D: PowerUp");
+                audioSourcePowerUp.Play();
                 collision.gameObject.GetComponent<PowerUp>().Activate();
                 break;
 
@@ -310,7 +312,10 @@ public class PlayerController : MonoBehaviour
             if (velocity.y < 0)
             {
                 velocity.y /= 2;
+                if (audioSourceSlide.isPlaying == false)
+                {
                 audioSourceSlide.Play();
+                }
 
             }
             if (jumped)

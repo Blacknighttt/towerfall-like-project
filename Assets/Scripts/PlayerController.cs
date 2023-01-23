@@ -61,6 +61,7 @@ public class PlayerController : MonoBehaviour
     public AudioSource audioSourceDash;
     public AudioSource audioSourcePick;
     public AudioSource audioSourceThrow;
+    public AudioSource audioSourceSlide;
 
     private void Awake()
     {
@@ -309,6 +310,8 @@ public class PlayerController : MonoBehaviour
             if (velocity.y < 0)
             {
                 velocity.y /= 2;
+                audioSourceSlide.Play();
+
             }
             if (jumped)
             {

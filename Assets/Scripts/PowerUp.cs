@@ -5,7 +5,7 @@ using UnityEngine;
 public class PowerUp : MonoBehaviour
 {
     public PlayerController playerController;
-    public AudioSource audioSourcePowerUpType;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -20,8 +20,9 @@ public class PowerUp : MonoBehaviour
 
     public void Activate()
     {
+
         print("PowerUp!"); 
         Destroy(gameObject);
-        audioSourcePowerUpType.Play();
+        
     }
 }

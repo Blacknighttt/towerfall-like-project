@@ -56,6 +56,12 @@ public class PlayerController : MonoBehaviour
     private bool canDash = true;
     private bool isDashing;
 
+    //audio
+    public AudioSource audioSourceJump;
+    public AudioSource audioSourceDash;
+    public AudioSource audioSourcePick;
+    public AudioSource audioSourceThrow;
+
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
@@ -80,6 +86,7 @@ public class PlayerController : MonoBehaviour
     public void OnJump(InputAction.CallbackContext _context)
     {
         jumped = _context.action.triggered;
+        
     }
 
     // Start coroutine when input dash is triggered
@@ -97,7 +104,7 @@ public class PlayerController : MonoBehaviour
         if (_context.canceled)
         {
             Projectile localProjectile = Instantiate(projectile, transform.position, transform.rotation);
-
+            audioSourceThrow.Play();
             localProjectile.SetOwner(this.gameObject);
 
             if (aimInput != Vector2.zero)
@@ -119,6 +126,7 @@ public class PlayerController : MonoBehaviour
         float originalGravity = customGravity;
         customGravity = 0;
         velocity = new Vector2(movementInput * dashingPower, 0f);
+        audioSourceDash.Play();
         trailRenderer.emitting = true;
         yield return new WaitForSeconds(dashingTimer);
 
@@ -181,6 +189,7 @@ public class PlayerController : MonoBehaviour
                 {
                     print("OnCollisionEnter2D: Pickup Projectile");
                     projectile.PickedUp();
+                    audioSourcePick.Play();
                 }
                 break;
 
@@ -291,6 +300,7 @@ public class PlayerController : MonoBehaviour
             {
                 // Calculate the velocity required to achieve the target jump height
                 velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity));
+                audioSourceJump.Play();
             }
         }
 
@@ -303,6 +313,7 @@ public class PlayerController : MonoBehaviour
             if (jumped)
             {
                 velocity = new Vector2(wallJumpForce * wallDirection.x, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
+                audioSourceJump.Play();
             }
         }
 

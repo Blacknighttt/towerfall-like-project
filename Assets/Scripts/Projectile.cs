@@ -22,7 +22,14 @@ public class Projectile : MonoBehaviour
     public float projectileGravity = 0.05f;
     private Vector2 velocity;
     public bool anchored;
-    
+
+    //audio
+    public AudioSource audioSourceHit;
+    public AudioSource audioSourceHitWall;
+    public AudioSource audioSourceHitShield;
+    public AudioSource audioSourceSuicide;
+
+
     void Awake()
     {
         spriteTransform = transform.GetChild(0).GetComponent<Transform>();
@@ -65,6 +72,7 @@ public class Projectile : MonoBehaviour
             // Check with Raycast if projectile meets a platform object
             if (Physics2D.BoxCast(transform.position, boxCollider.size, 20f, direction, 0.2f, hitLayer))
             {
+                audioSourceHitWall.Play();
                 velocity = Vector2.zero;
                 speed = 0;
                 anchored = true;
@@ -95,11 +103,13 @@ public class Projectile : MonoBehaviour
                     {
                         print("ProjectileOnCollision2D: Kill Enemy");
                         Destroy(collision.gameObject);
+                        audioSourceHit.Play();
                     }
                 }
                 else if (collision.GetContact(0).normal.y > 0)
                 {
                     print("ProjectileOnCollision2D: Kill Own Player");
+                    audioSourceSuicide.Play();
                     //Destroy(owner); //Bug, we shall check direction + velocity or distance
                 }
                 break;

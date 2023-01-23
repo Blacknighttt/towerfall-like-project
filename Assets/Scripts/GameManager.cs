@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     private float spawnInTime = 2;
     private float repeatTime = 10;
 
+    //audio
+    public AudioSource audioSourcePowerUp;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -28,5 +31,6 @@ public class GameManager : MonoBehaviour
     {
         int randomIndex = Random.Range(0, powerUp.Length);
         Instantiate(powerUp[randomIndex], RandomPos(), Quaternion.identity);
+        audioSourcePowerUp.Play();
     }
 }

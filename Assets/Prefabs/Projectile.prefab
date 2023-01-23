@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8802289475070349513}
   - component: {fileID: 3539312483073128062}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: ProjectileSprite
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -95,8 +95,7 @@ GameObject:
   - component: {fileID: 7090071650743770425}
   - component: {fileID: 7090071650743770426}
   - component: {fileID: 3312329587673906057}
-  - component: {fileID: -4636483434608095018}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Projectile
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -132,6 +131,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
+  hitLayer:
+    serializedVersion: 2
+    m_Bits: 256
   speed: 45
   direction: {x: 0, y: 0}
   waitGravity: 0.45
@@ -169,7 +171,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.35828888, y: 0.002482891}
+  m_Offset: {x: -0.20292568, y: -0.0114302635}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -180,32 +182,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.5998628, y: 0.84}
+  m_Size: {x: 2.8456612, y: 0.571013}
   m_EdgeRadius: 0
---- !u!50 &-4636483434608095018
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7090071650743770427}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 0.0001
-  m_LinearDrag: 0
-  m_AngularDrag: 0
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 1
-  m_Constraints: 0

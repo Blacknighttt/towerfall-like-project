@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Runtime.ExceptionServices;
 using Unity.Mathematics;
 using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class Projectile : MonoBehaviour
 {
@@ -12,6 +14,7 @@ public class Projectile : MonoBehaviour
     private Transform spriteTransform;
     private BoxCollider2D boxCollider;
 
+    public LayerMask hitLayer;
     public float speed = 100;
     public Vector2 direction;
     public float waitGravity = 0.5f;
@@ -58,9 +61,16 @@ public class Projectile : MonoBehaviour
         {
             velocity = new Vector2(direction.x, direction.y -= gravity) * speed;
             transform.Translate(velocity * Time.deltaTime);
+
+            // Check with Raycast if projectile meets a platform object
+            if (Physics2D.BoxCast(transform.position, boxCollider.size, 20f, direction, 0.2f, hitLayer))
+            {
+                velocity = Vector2.zero;
+                speed = 0;
+                anchored = true;
+            }
         }
         SetSpriteOrientation();
-        //CheckCollisions();
     }
 
     private IEnumerator WaitForGravity()
@@ -78,15 +88,6 @@ public class Projectile : MonoBehaviour
     {
         switch (collision.gameObject.tag)
         {
-            case "Ground":
-            case "Wall":
-                GetComponent<Rigidbody2D>().mass = 0;
-                GetComponent<Rigidbody2D>().freezeRotation = true;
-                GetComponent<Rigidbody2D>().drag = 1000;
-                velocity = Vector2.zero;
-                anchored = true;
-                break;
-
             case "Player":
                 if(collision.gameObject != owner)
                 {

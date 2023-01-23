@@ -253,14 +253,6 @@ MonoBehaviour:
   lastAimInput: {x: 1, y: 0}
   jumped: 0
   isGrounded: 0
-  onWallRight: 0
-  onWallLeft: 0
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 128
   projectile: {fileID: 7090071650743770426, guid: a918f13ed1a9b6548a2cb79b519d7a44, type: 3}
   dashingPower: 70
   dashingTimer: 0.2

@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
 
 
     public PowerUp powerUp;
-    public BoxCollider2D boxCollider;
+    private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
 
     private Vector2 velocity;
@@ -38,13 +38,6 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded;
     private bool wallJump = false;
     private Vector2 wallDirection;
-
-    // Raycast
-    private float raycastDistance = 0.2f;
-    public LayerMask groundLayer;
-    public LayerMask wallLayer;
-
-
 
     // Projectile
     [Header("Projectile")]
@@ -115,8 +108,6 @@ public class PlayerController : MonoBehaviour
                 localProjectile.SetDirection(lastAimInput);
 
             isFiring = false;
-            lastProjectile = localProjectile;
-            projectileCollider = lastProjectile.GetComponentInChildren<BoxCollider2D>();
         }
     }
 
@@ -219,7 +210,7 @@ public class PlayerController : MonoBehaviour
                 break;
 
             case "Wall":
-                print("OnCollisionExit2D: Wall");
+                //print("OnCollisionExit2D: Wall");
                 wallJump = false;
                 break;
 

@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 4073233133839803235}
   - component: {fileID: 4073233133839803234}
   - component: {fileID: 4073233133839803260}
-  - component: {fileID: 7557147776522420846}
   - component: {fileID: -1726176142212404527}
   - component: {fileID: -2414549019282756031}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SpeedUp
   m_TagString: PowerUp
   m_Icon: {fileID: 0}
@@ -133,20 +132,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 13.404697, y: 13.927856}
   m_EdgeRadius: 0
---- !u!114 &7557147776522420846
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4073233133839803233}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b79b0325b954ecd4ca2c25691fdacb9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerController: {fileID: 8711168125661291456, guid: c876e4b88d862c94480ee4b4d0c05207, type: 3}
-  audioSourcePowerUpType: {fileID: -1726176142212404527}
 --- !u!82 &-1726176142212404527
 AudioSource:
   m_ObjectHideFlags: 0

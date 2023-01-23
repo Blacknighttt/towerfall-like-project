@@ -5,11 +5,10 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public GameObject[] powerUp;
+    public Transform[] spawnPos;
 
-    private float spawnRangeX = 33f;
-    private float spawnRangeY = -9;
     private float spawnInTime = 2;
-    private float repeatTime = 10;
+    private float repeatTime = 5;
 
     //audio
     public AudioSource audioSourcePowerUp;
@@ -17,20 +16,13 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        InvokeRepeating(nameof(SpawnPowerUp), spawnInTime, repeatTime);
-    }
-    private Vector2 RandomPos()
-    {
-        float spawnX = Random.Range(-spawnRangeX, spawnRangeX);
-        float spawnY = spawnRangeY;
-
-        Vector2 randomPos = new Vector2(spawnX, spawnY);
-        return randomPos;
+        InvokeRepeating("SpawnPowerUp", spawnInTime, repeatTime);
     }
     private void SpawnPowerUp()
     {
         int randomIndex = Random.Range(0, powerUp.Length);
-        Instantiate(powerUp[randomIndex], RandomPos(), Quaternion.identity);
+        int randomSpawn = Random.Range(0, spawnPos.Length);
+        Instantiate(powerUp[randomIndex], spawnPos[randomSpawn].transform.position, Quaternion.identity);
         audioSourcePowerUp.Play();
     }
 }

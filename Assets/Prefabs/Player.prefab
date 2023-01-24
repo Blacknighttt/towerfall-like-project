@@ -253,7 +253,7 @@ MonoBehaviour:
   airAcceleration: 200
   groundDeceleration: 200
   airDeceleration: 200
-  jumpHeight: 6
+  jumpHeight: 8
   customGravity: -100
   wallJumpForce: 25
   velocity: {x: 0, y: 0}

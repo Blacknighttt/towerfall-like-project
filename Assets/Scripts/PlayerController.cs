@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float airAcceleration = 100;
     [SerializeField] private float groundDeceleration = 150;
     [SerializeField] private float airDeceleration = 100;
-    [SerializeField] private float jumpHeight = 3;
+    [SerializeField] public float jumpHeight = 3;
     [SerializeField] public float customGravity = -30f;
     [SerializeField] private float wallJumpForce = 50f;
 

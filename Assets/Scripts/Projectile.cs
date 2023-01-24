@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Runtime.ExceptionServices;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Animations;
@@ -22,6 +23,8 @@ public class Projectile : MonoBehaviour
     public float projectileGravity = 0.05f;
     private Vector2 velocity;
     public bool anchored;
+    public bool deflected;
+    private float noCollisionTimer = 0;
 
     //audio
     public AudioSource audioSourceHit;
@@ -40,6 +43,7 @@ public class Projectile : MonoBehaviour
     {
         direction = _direction;
         StartCoroutine(WaitForGravity());
+        noCollisionTimer = 0.1f;
     }
 
     public void SetOwner(GameObject _owner)
@@ -64,6 +68,9 @@ public class Projectile : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (noCollisionTimer >= 0)
+            noCollisionTimer -= Time.deltaTime;
+
         if (!anchored)
         {
             velocity = new Vector2(direction.x, direction.y -= gravity) * speed;
@@ -92,33 +99,85 @@ public class Projectile : MonoBehaviour
         gravity = projectileGravity;
     }
 
-    public void OnCollisionEnter2D(Collision2D collision)
+    public void OnTriggerEnter2D(Collider2D collider)
     {
-        switch (collision.gameObject.tag)
+        switch (collider.gameObject.tag)
         {
             case "Player":
-                if(collision.gameObject != owner)
+                if (!anchored && !deflected)
                 {
-                    if (!anchored)
+                    PlayerController player = collider.gameObject.GetComponent<PlayerController>();
+                    if(collider.gameObject != owner)
                     {
                         print("ProjectileOnCollision2D: Kill Enemy");
-                        Destroy(collision.gameObject);
+                        player.GetHit();
                         audioSourceHit.Play();
                     }
+                    else if (noCollisionTimer <= 0)
+                    {
+                        print("ProjectileOnCollision2D: Kill Own Player");
+                        audioSourceSuicide.Play();
+                        player.GetHit();
+                    }
                 }
-                else if (collision.GetContact(0).normal.y > 0)
+                break;
+
+            case "PlayerShield":
+                GameObject shieldOwner = collider.gameObject.transform.parent.gameObject;
+                if (shieldOwner != owner)
                 {
-                    print("ProjectileOnCollision2D: Kill Own Player");
-                    audioSourceSuicide.Play();
-                    //Destroy(owner); //Bug, we shall check direction + velocity or distance
+                    Deflect(shieldOwner.GetComponent<PlayerController>());
+                }
+                else if (noCollisionTimer <= 0)
+                {
+                    Deflect(shieldOwner.GetComponent<PlayerController>());
                 }
                 break;
 
             default:
-                print("ProjectileOnCollision2D: Unknown Tag (" + collision.gameObject.tag + ")");
+                print("ProjectileOnCollision2D: Unknown Tag (" + collider.gameObject.tag + ")");
                 break;
         }
     }
+
+    //public void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    switch (collision.gameObject.tag)
+    //    {
+    //        case "Player":
+    //            PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
+    //            if (collision.gameObject != owner)
+    //            {
+    //                if (!anchored)
+    //                {
+    //                    print("ProjectileOnCollision2D: Kill Enemy");
+    //                    playerController.GetHit();
+    //                    audioSourceHit.Play();
+    //                }
+    //            }
+    //            else if (collision.GetContact(0).normal.y > 0 && noCollisionTimer <= 0)
+    //            {
+    //                print("ProjectileOnCollision2D: Kill Own Player");
+    //                audioSourceSuicide.Play();
+    //                playerController.GetHit();
+    //            }
+    //            break;
+    //
+    //        default:
+    //            print("ProjectileOnCollision2D: Unknown Tag (" + collision.gameObject.tag + ")");
+    //            break;
+    //    }
+    //}
+
+    private void Deflect(PlayerController _player)
+    {
+        print("deflect");
+        direction = direction * - 0.4f;
+        gravity = projectileGravity;
+        deflected = true;
+        _player.GetHit();
+    }
+
 
     public void PickedUp()
     {

@@ -11,6 +11,9 @@ using UnityEngine.InputSystem.LowLevel;
 [RequireComponent(typeof(BoxCollider2D))]
 public class PlayerController : MonoBehaviour
 {
+    // Globals
+    private bool isDead = false;
+    
     // Movement variables
     [Header ("Movement")]
     [SerializeField] public float speed = 10;
@@ -26,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
+    private PlayerInput playerInput;
 
     public Vector2 velocity;
 
@@ -36,6 +40,11 @@ public class PlayerController : MonoBehaviour
 
     // Powerups
     public GameObject shieldPrefab;
+    private GameObject equipedShield;
+    private bool hasShieldPowerUp = false;
+
+    private bool hasSpeedPowerUp = false;
+    public float speedPowerUpTimer = 5f;
 
     // Wall & ground
     public bool jumped = false;
@@ -60,7 +69,7 @@ public class PlayerController : MonoBehaviour
     private bool canDash = true;
     private bool isDashing;
 
-    //audio
+    // Audio
     public AudioSource audioSourceJump;
     public AudioSource audioSourceDash;
     public AudioSource audioSourcePick;
@@ -73,6 +82,7 @@ public class PlayerController : MonoBehaviour
         trailRenderer = GetComponent<TrailRenderer>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        playerInput = GetComponent<PlayerInput>();
     }
 
     // Get horizontal and vertical input
@@ -167,10 +177,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Die()
+    public void GetHit()
     {
-        //animator.SetTrigger("Death");
-        Destroy(gameObject);
+        if (hasShieldPowerUp && equipedShield != null)
+        {
+            Destroy(equipedShield);
+            hasShieldPowerUp = false;
+        }
+        else if (!isDead)
+        {
+            animator.SetTrigger("Death");
+            
+            playerInput.DeactivateInput();
+        }
     }
 
 
@@ -184,35 +203,10 @@ public class PlayerController : MonoBehaviour
     {
         switch(collision.gameObject.tag)
         {
-            case "PowerUp":
-                //print("OnCollisionEnter2D: PowerUp");
-                if (collision.gameObject.layer == LayerMask.NameToLayer("ShieldUp"))
-                {
-                    print("J'ai un shield");
-                    ShieldEffects();
-                }
-                if (collision.gameObject.layer == LayerMask.NameToLayer("SpeedUp"))
-                {
-                    print("je vais plus vite");
-                    SpeedEffects();
-                }
-                Destroy(collision.gameObject);
-                break;
-
             case "Wall":
                 //print("OnCollisionEnter2D: Wall");
                 wallJump = true;
                 wallDirection = collision.GetContact(0).normal; // Set wall direction
-                break;
-
-            case "Projectile":
-                Projectile projectile = collision.gameObject.GetComponent<Projectile>();
-                if (projectile.anchored)
-                {
-                    print("OnCollisionEnter2D: Pickup Projectile");
-                    projectile.PickedUp();
-                    audioSourcePick.Play();
-                }
                 break;
 
             case "Ground":
@@ -223,7 +217,7 @@ public class PlayerController : MonoBehaviour
             case "Player":
                 print("OnCollisionEnter2D: Player");
                 if(collision.GetContact(0).normal.y > 0) 
-                    collision.gameObject.GetComponent<PlayerController>().Die(); // Kill player beneath us
+                    collision.gameObject.GetComponent<PlayerController>().GetHit(); // Kill player beneath us
                 break;
 
             default:
@@ -232,15 +226,56 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void ShieldEffects()
+    public void OnTriggerEnter2D(Collider2D collider)
     {
-        GameObject shield = Instantiate(shieldPrefab, transform.position, transform.rotation);
-        shield.transform.SetParent(transform);
+        switch (collider.gameObject.tag)
+        {
+            case "PowerUp":
+                print("OnCollisionEnter2D: PowerUp");
+                if (collider.gameObject.layer == LayerMask.NameToLayer("ShieldUp") && !hasShieldPowerUp)
+                {
+                    PickUpShield(collider.gameObject);
+                }
+                if (collider.gameObject.layer == LayerMask.NameToLayer("SpeedUp") && !hasSpeedPowerUp)
+                {
+                    PickUpSpeed(collider.gameObject);
+                }
+                break;
+
+            case "Projectile":
+                Projectile projectile = collider.gameObject.GetComponent<Projectile>();
+                if (projectile.anchored)
+                {
+                    print("OnCollisionEnter2D: Pickup Projectile");
+                    projectile.PickedUp();
+                    audioSourcePick.Play();
+                }
+                break;
+
+            default:
+                    print("OnTriggerEnter2D: Unknown Tag (" + collider.gameObject.tag + ")");
+            break;
+        }
     }
 
-    private void SpeedEffects()
+        private void PickUpShield(GameObject _powerUp)
     {
+        print("J'ai un shield");
+        Destroy(_powerUp);
 
+        GameObject shield = Instantiate(shieldPrefab, transform.position, transform.rotation);
+        shield.transform.SetParent(transform);
+        hasShieldPowerUp = true;
+        equipedShield = shield;
+    }
+
+    private void PickUpSpeed(GameObject _powerUp)
+    {
+        float timer;
+        print("je vais plus vite");
+        Destroy(_powerUp);
+
+        timer = speedPowerUpTimer; 
     }
 
 

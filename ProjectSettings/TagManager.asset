@@ -9,6 +9,7 @@ TagManager:
   - Ground
   - PowerUp
   - PowerUpShield
+  - PlayerShield
   layers:
   - Default
   - TransparentFX

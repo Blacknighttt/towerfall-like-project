@@ -253,10 +253,20 @@ MonoBehaviour:
   jumpHeight: 6
   customGravity: -100
   wallJumpForce: 25
+  inputAction:
+    m_Name: Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 2b103434-f22f-448e-b997-010158db53c8
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
   velocity: {x: 0, y: 0}
   aimInput: {x: 0, y: 0}
   lastAimInput: {x: 1, y: 0}
   shieldPrefab: {fileID: 44094415109872261, guid: 10f31697fd2da574e8a03b463b673533, type: 3}
+  speedPowerUpTimer: 5
   jumped: 0
   isGrounded: 0
   projectile: {fileID: 7090071650743770426, guid: a918f13ed1a9b6548a2cb79b519d7a44, type: 3}

@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour
     // Particle Anim
     public GameObject jumpSmoke;
     public GameObject slideSmoke;
-    public GameObject hit;
+    
     
     // Audio
     public AudioSource audioSourceJump;
@@ -419,7 +419,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (!wallJump)
         { 
-            Destroy(slideSmoke);
+            
             animator.SetBool("WallSlide", false);
             audioSourceSlide.Stop();
         }

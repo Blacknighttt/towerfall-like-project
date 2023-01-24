@@ -146,10 +146,6 @@ MonoBehaviour:
   projectileGravity: 0.05
   anchored: 0
   deflected: 0
-<<<<<<< HEAD
-=======
-  particleHit: {fileID: 8561404836712858627, guid: 1189961b414e91342b9d5433a69c26e7, type: 3}
->>>>>>> 33e21c9117e8edc4eece1f2514bb57c61e3bb07d
   audioSourceHit: {fileID: 7230569542220803572}
   audioSourceHitWall: {fileID: 7943397844810817809}
   audioSourceHitShield: {fileID: 0}

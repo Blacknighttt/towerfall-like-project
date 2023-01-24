@@ -58,6 +58,8 @@ public class PlayerController : MonoBehaviour
     private Projectile lastProjectile;
     private BoxCollider2D projectileCollider;
     private bool isFiring;
+    private int ammo = 5;
+    public bool canShoot;
 
 
     // Dash variables
@@ -123,27 +125,33 @@ public class PlayerController : MonoBehaviour
     // Instantiate projectile and set its direction to aim
     public void OnFire(InputAction.CallbackContext _context)
     {
-        if (_context.started)
+        canShoot = ammo > 0; 
+        if (canShoot)
         {
-            isFiring = true;
-            animator.SetTrigger("Throw");
-        }
-        if (_context.canceled)
-        {
-            Projectile localProjectile = Instantiate(projectile, transform.position, transform.rotation);
-            animator.SetTrigger("ThrowReleased");
-            audioSourceThrow.Play();
-            localProjectile.SetOwner(this.gameObject);
-
-            if (aimInput != Vector2.zero)
+            if (_context.started)
             {
-                localProjectile.SetDirection(aimInput);
+                isFiring = true;
+                animator.SetTrigger("Throw");
             }
-            else
-                localProjectile.SetDirection(lastAimInput);
+            if (_context.canceled)
+            {
+                Projectile localProjectile = Instantiate(projectile, transform.position, transform.rotation);
+                animator.SetTrigger("ThrowReleased");
+                audioSourceThrow.Play();
+                localProjectile.SetOwner(this.gameObject);
+                ammo -= 1;
 
-            isFiring = false;
+                if (aimInput != Vector2.zero)
+                {
+                    localProjectile.SetDirection(aimInput);
+                }
+                else
+                    localProjectile.SetDirection(lastAimInput);
+
+                isFiring = false;
+            }
         }
+
     }
 
     // Dash coroutine
@@ -201,13 +209,29 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        float acceleration = isGrounded ? walkAcceleration : airAcceleration;
+        float deceleration = isGrounded ? groundDeceleration : airDeceleration;
+
+        CalculateVerticalVelocity();
+
+        CalculateHorizontalVelocity(acceleration, deceleration);
+
+        SetMovement();
+
+        animator.SetBool("Grounded", isGrounded);
+        animator.SetBool("HorizontalMovement", velocity.x != 0);
+        animator.SetBool("Fall", velocity.y < -2f);
+    }
 
     private void Update()
     {
         SetSpriteFacing();
         SetLastAim();
+        print(ammo);
     }
-
+    
     public void OnCollisionEnter2D(Collision2D collision)
     {
         switch(collision.gameObject.tag)
@@ -257,6 +281,7 @@ public class PlayerController : MonoBehaviour
                 {
                     print("OnCollisionEnter2D: Pickup Projectile");
                     projectile.PickedUp();
+                    ammo += 1;
                     audioSourcePick.Play();
                 }
                 break;
@@ -266,28 +291,6 @@ public class PlayerController : MonoBehaviour
             break;
         }
     }
-
-        private void PickUpShield(GameObject _powerUp)
-    {
-        print("J'ai un shield");
-        Destroy(_powerUp);
-        audioSourceShield.Play();
-        GameObject shield = Instantiate(shieldPrefab, transform.position, transform.rotation);
-        shield.transform.SetParent(transform);
-        hasShieldPowerUp = true;
-        equipedShield = shield;
-    }
-
-    private void PickUpSpeed(GameObject _powerUp)
-    {
-        float timer;
-        audioSourceSpeed.Play();
-        print("je vais plus vite");
-        Destroy(_powerUp);
-
-        timer = speedPowerUpTimer; 
-    }
-
 
     public void OnCollisionExit2D(Collision2D collision)
     {
@@ -320,22 +323,25 @@ public class PlayerController : MonoBehaviour
                 break;
         }
     }
-
-
-    private void FixedUpdate()
+    private void PickUpShield(GameObject _powerUp)
     {
-        float acceleration = isGrounded ? walkAcceleration : airAcceleration;
-        float deceleration = isGrounded ? groundDeceleration : airDeceleration;
+        print("J'ai un shield");
+        Destroy(_powerUp);
+        audioSourceShield.Play();
+        GameObject shield = Instantiate(shieldPrefab, transform.position, transform.rotation);
+        shield.transform.SetParent(transform);
+        hasShieldPowerUp = true;
+        equipedShield = shield;
+    }
 
-        CalculateVerticalVelocity();
+    private void PickUpSpeed(GameObject _powerUp)
+    {
+        float timer;
+        audioSourceSpeed.Play();
+        print("je vais plus vite");
+        Destroy(_powerUp);
 
-        CalculateHorizontalVelocity(acceleration, deceleration);
-
-        SetMovement();
-
-        animator.SetBool("Grounded", isGrounded);
-        animator.SetBool("HorizontalMovement", velocity.x != 0);
-        animator.SetBool("Fall", velocity.y < -2f);
+        timer = speedPowerUpTimer; 
     }
 
     // Calculate x velocity

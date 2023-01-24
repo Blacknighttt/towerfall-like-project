@@ -71,6 +71,11 @@ public class PlayerController : MonoBehaviour
     private bool canDash = true;
     private bool isDashing;
 
+    // Particle Anim
+    public GameObject jumpSmoke;
+    public GameObject slideSmoke;
+    
+    
     // Audio
     public AudioSource audioSourceJump;
     public AudioSource audioSourceDash;
@@ -386,8 +391,11 @@ public class PlayerController : MonoBehaviour
                 velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity));
                 StartAnimationJump();
                 audioSourceJump.Play();
+                GameObject jumpsmoke = Instantiate(jumpSmoke, transform.position, transform.rotation);
+                jumpsmoke.transform.SetParent(transform);
+
             }
-        }
+        }////////////////////
 
         if (wallJump)
         {
@@ -396,9 +404,13 @@ public class PlayerController : MonoBehaviour
                 velocity.y /= 2;
                 if (!audioSourceSlide.isPlaying)
                 {
-                audioSourceSlide.Play();    
+                audioSourceSlide.Play();
+                    GameObject slidesmoke = Instantiate(slideSmoke, transform.position, transform.rotation);
+                    slidesmoke.transform.SetParent(transform);
+                    slidesmoke.SetActive(true);
                 }    
                 animator.SetBool("WallSlide", true);
+                
             }
             if (jumped)
             {
@@ -407,10 +419,14 @@ public class PlayerController : MonoBehaviour
                 velocity = new Vector2(wallJumpForce * wallDirection.x, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
                 audioSourceJump.Play();
                 StartAnimationJump();
+                
+
             }
         }
         else if (!wallJump)
-        { animator.SetBool("WallSlide", false);
+        { 
+            
+            animator.SetBool("WallSlide", false);
             audioSourceSlide.Stop();
         }
 
@@ -425,4 +441,5 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetBool("Jump", false);
     }
+
 }

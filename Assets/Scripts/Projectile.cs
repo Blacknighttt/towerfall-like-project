@@ -27,6 +27,9 @@ public class Projectile : MonoBehaviour
     public bool deflected;
     private float noCollisionTimer = 0;
 
+    //particle
+    public GameObject particleHit;
+
     //audio
     public AudioSource audioSourceHit;
     public AudioSource audioSourceHitWall;
@@ -114,6 +117,8 @@ public class Projectile : MonoBehaviour
                         print("ProjectileOnCollision2D: Kill Enemy");
                         player.GetHit();
                         audioSourceHit.Play();
+                        GameObject particlehit = Instantiate(particleHit, player.transform.position, player.transform.rotation);
+                        particlehit.transform.SetParent(player.transform);
                     }
                     else if (noCollisionTimer <= 0)
                     {

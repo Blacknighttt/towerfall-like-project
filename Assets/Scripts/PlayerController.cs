@@ -85,6 +85,7 @@ public class PlayerController : MonoBehaviour
     public AudioSource audioSourceShield;
     public AudioSource audioSourceSpeed;
     public AudioSource audioSourceShieldBreak;
+    public AudioSource EmptyAmmo;
 
     private void Awake()
     {
@@ -150,6 +151,10 @@ public class PlayerController : MonoBehaviour
 
                 isFiring = false;
             }
+        }
+        else
+        {
+            EmptyAmmo.Play();
         }
 
     }

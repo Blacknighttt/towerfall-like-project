@@ -69,6 +69,11 @@ public class PlayerController : MonoBehaviour
     private bool canDash = true;
     private bool isDashing;
 
+    // Particle Anim
+    public GameObject jumpSmoke;
+    public GameObject slideSmoke;
+    public GameObject hit;
+    
     // Audio
     public AudioSource audioSourceJump;
     public AudioSource audioSourceDash;
@@ -380,6 +385,9 @@ public class PlayerController : MonoBehaviour
                 velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity));
                 StartAnimationJump();
                 audioSourceJump.Play();
+                GameObject jumpsmoke = Instantiate(jumpSmoke, transform.position, transform.rotation);
+                jumpsmoke.transform.SetParent(transform);
+
             }
         }
 
@@ -419,4 +427,5 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetBool("Jump", false);
     }
+
 }

@@ -267,6 +267,9 @@ MonoBehaviour:
   dashingPower: 70
   dashingTimer: 0.2
   dashingCooldown: 1
+  jumpSmoke: {fileID: 8837100345773054942, guid: c741b27c033c49a4daa2467c56466064, type: 3}
+  slideSmoke: {fileID: 0}
+  hit: {fileID: 0}
   audioSourceJump: {fileID: 5549555345361055902}
   audioSourceDash: {fileID: 2526454914147083460}
   audioSourcePick: {fileID: -9007111676636923820}

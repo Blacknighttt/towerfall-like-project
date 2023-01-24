@@ -389,7 +389,7 @@ public class PlayerController : MonoBehaviour
                 jumpsmoke.transform.SetParent(transform);
 
             }
-        }
+        }////////////////////
 
         if (wallJump)
         {
@@ -398,9 +398,13 @@ public class PlayerController : MonoBehaviour
                 velocity.y /= 2;
                 if (!audioSourceSlide.isPlaying)
                 {
-                audioSourceSlide.Play();    
+                audioSourceSlide.Play();
+                    GameObject slidesmoke = Instantiate(slideSmoke, transform.position, transform.rotation);
+                    slidesmoke.transform.SetParent(transform);
+                    slidesmoke.SetActive(true);
                 }    
                 animator.SetBool("WallSlide", true);
+                
             }
             if (jumped)
             {
@@ -409,10 +413,14 @@ public class PlayerController : MonoBehaviour
                 velocity = new Vector2(wallJumpForce * wallDirection.x, Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(customGravity)));
                 audioSourceJump.Play();
                 StartAnimationJump();
+                
+
             }
         }
         else if (!wallJump)
-        { animator.SetBool("WallSlide", false);
+        { 
+            Destroy(slideSmoke);
+            animator.SetBool("WallSlide", false);
             audioSourceSlide.Stop();
         }
 

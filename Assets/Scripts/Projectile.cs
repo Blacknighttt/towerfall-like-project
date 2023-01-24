@@ -14,6 +14,7 @@ public class Projectile : MonoBehaviour
     public GameObject owner;
     private Transform spriteTransform;
     private BoxCollider2D boxCollider;
+    
 
     public LayerMask hitLayer;
     public float speed = 100;
@@ -38,6 +39,7 @@ public class Projectile : MonoBehaviour
         spriteTransform = transform.GetChild(0).GetComponent<Transform>();
         boxCollider = GetComponent<BoxCollider2D>();
     }
+
 
     public void SetDirection(Vector2 _direction)
     {

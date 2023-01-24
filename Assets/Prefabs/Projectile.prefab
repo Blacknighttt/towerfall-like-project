@@ -135,6 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6358e3f6ebc3f0b4a9f46983e966e953, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 8711168125661291456, guid: c876e4b88d862c94480ee4b4d0c05207, type: 3}
   owner: {fileID: 0}
   hitLayer:
     serializedVersion: 2
@@ -144,6 +145,7 @@ MonoBehaviour:
   waitGravity: 0.45
   projectileGravity: 0.05
   anchored: 0
+  deflected: 0
   audioSourceHit: {fileID: 7230569542220803572}
   audioSourceHitWall: {fileID: 7943397844810817809}
   audioSourceHitShield: {fileID: 0}

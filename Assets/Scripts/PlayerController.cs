@@ -75,6 +75,9 @@ public class PlayerController : MonoBehaviour
     public AudioSource audioSourcePick;
     public AudioSource audioSourceThrow;
     public AudioSource audioSourceSlide;
+    public AudioSource audioSourceShield;
+    public AudioSource audioSourceSpeed;
+    public AudioSource audioSourceShieldBreak;
 
     private void Awake()
     {
@@ -182,6 +185,7 @@ public class PlayerController : MonoBehaviour
         if (hasShieldPowerUp && equipedShield != null)
         {
             Destroy(equipedShield);
+            audioSourceShieldBreak.Play();
             hasShieldPowerUp = false;
         }
         else if (!isDead)
@@ -262,7 +266,7 @@ public class PlayerController : MonoBehaviour
     {
         print("J'ai un shield");
         Destroy(_powerUp);
-
+        audioSourceShield.Play();
         GameObject shield = Instantiate(shieldPrefab, transform.position, transform.rotation);
         shield.transform.SetParent(transform);
         hasShieldPowerUp = true;
@@ -272,6 +276,7 @@ public class PlayerController : MonoBehaviour
     private void PickUpSpeed(GameObject _powerUp)
     {
         float timer;
+        audioSourceSpeed.Play();
         print("je vais plus vite");
         Destroy(_powerUp);
 
@@ -383,7 +388,10 @@ public class PlayerController : MonoBehaviour
             if (velocity.y < 0)
             {
                 velocity.y /= 2;
-                audioSourceSlide.Play();
+                if (!audioSourceSlide.isPlaying)
+                {
+                audioSourceSlide.Play();    
+                }    
                 animator.SetBool("WallSlide", true);
             }
             if (jumped)
@@ -396,7 +404,9 @@ public class PlayerController : MonoBehaviour
             }
         }
         else if (!wallJump)
-            animator.SetBool("WallSlide", false);
+        { animator.SetBool("WallSlide", false);
+            audioSourceSlide.Stop();
+        }
 
         velocity.y += customGravity * Time.deltaTime;
     }

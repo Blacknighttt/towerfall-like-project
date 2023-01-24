@@ -7,11 +7,11 @@ public class MapBounds : MonoBehaviour
 {
     public Collider2D mapBoundsL;
     public Collider2D mapBoundsR;
-    //public Collider2D mapBoundsT;
-   // public Collider2D mapBoundsB;
+    public Collider2D mapBoundsT;
+    public Collider2D mapBoundsB;
     private ContactFilter2D filter;
     private float distanceX;
-   // private float distanceY;
+    private float distanceY;
 
     
 
@@ -19,7 +19,7 @@ public class MapBounds : MonoBehaviour
     private void Start()
     {
         DistanceX();
-        //DistanceY();
+        DistanceY();
         filter = new ContactFilter2D().NoFilter();
     }
 
@@ -38,7 +38,7 @@ public class MapBounds : MonoBehaviour
             TeleportLeft(results[0].GetComponent<Transform>());
         results.Clear();
 
-       /* mapBoundsT.OverlapCollider(filter, results);
+       mapBoundsT.OverlapCollider(filter, results);
         if (results.Count > 0)
             TeleportBottom(results[0].GetComponent<Transform>());
 
@@ -47,7 +47,7 @@ public class MapBounds : MonoBehaviour
         mapBoundsB.OverlapCollider(filter, results);
         if (results.Count > 0)
             TeleportTop(results[0].GetComponent<Transform>());
-        results.Clear();*/
+        results.Clear();
 
     }
     private float DistanceX()
@@ -55,11 +55,11 @@ public class MapBounds : MonoBehaviour
         distanceX = (mapBoundsR.transform.position.x - mapBoundsL.transform.position.x)-3;
         return distanceX;
     }
-    /*private float DistanceY()
+    private float DistanceY()
     {
         distanceY= (mapBoundsR.transform.position.x - mapBoundsL.transform.position.x) - 3;
         return distanceY;
-    }*/
+    }
 
     private void TeleportLeft(Transform obj)
     {
@@ -70,7 +70,7 @@ public class MapBounds : MonoBehaviour
     {
         obj.Translate(new Vector2(distanceX, 0));
     }
-   /* private void TeleportBottom(Transform obj)
+    private void TeleportBottom(Transform obj)
     {
         obj.Translate(new Vector2(0,-distanceY));
     }
@@ -78,5 +78,5 @@ public class MapBounds : MonoBehaviour
     private void TeleportTop(Transform obj)
     {
         obj.Translate(new Vector2(0, distanceY));
-    }*/
+    }
 }

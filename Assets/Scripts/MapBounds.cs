@@ -57,7 +57,7 @@ public class MapBounds : MonoBehaviour
     }
     private float DistanceY()
     {
-        distanceY= (mapBoundsR.transform.position.x - mapBoundsL.transform.position.x) - 3;
+        distanceY= (mapBoundsT.transform.position.y - mapBoundsB.transform.position.y) - 3;
         return distanceY;
     }
 
@@ -78,5 +78,6 @@ public class MapBounds : MonoBehaviour
     private void TeleportTop(Transform obj)
     {
         obj.Translate(new Vector2(0, distanceY));
+        
     }
 }

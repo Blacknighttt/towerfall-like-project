@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     
     // Movement variables
     [Header ("Movement")]
-    [SerializeField] public float speed = 10;
+    [SerializeField] private float speed = 10;
     [SerializeField] private float walkAcceleration = 100;
     [SerializeField] private float airAcceleration = 100;
     [SerializeField] private float groundDeceleration = 150;
@@ -41,10 +41,9 @@ public class PlayerController : MonoBehaviour
     // Powerups
     public GameObject shieldPrefab;
     private GameObject equipedShield;
-    private bool hasShieldPowerUp = false;
+    private bool hasShieldPowerUp;
 
-    private bool hasSpeedPowerUp = false;
-    public float speedPowerUpTimer = 5f;
+    private bool hasSpeedPowerUp;
 
     // Wall & ground
     public bool jumped = false;
@@ -276,7 +275,7 @@ public class PlayerController : MonoBehaviour
                 }
                 if (collider.gameObject.layer == LayerMask.NameToLayer("SpeedUp") && !hasSpeedPowerUp)
                 {
-                    PickUpSpeed(collider.gameObject);
+                    StartCoroutine(SpeedPowerUp(collider.gameObject));
                 }
                 break;
 
@@ -339,14 +338,16 @@ public class PlayerController : MonoBehaviour
         equipedShield = shield;
     }
 
-    private void PickUpSpeed(GameObject _powerUp)
+    private IEnumerator SpeedPowerUp(GameObject _powerUp)
     {
-        float timer;
-        audioSourceSpeed.Play();
         print("je vais plus vite");
+        hasSpeedPowerUp = true;
+        speed *= 2;
+        audioSourceSpeed.Play();
         Destroy(_powerUp);
-
-        timer = speedPowerUpTimer; 
+        yield return new WaitForSeconds(5);
+        speed /= 2;
+        hasSpeedPowerUp = false;
     }
 
     // Calculate x velocity
